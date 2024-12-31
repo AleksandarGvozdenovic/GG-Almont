@@ -8,7 +8,6 @@ const hero = document.querySelector(".hero");
 const allSections = document.querySelectorAll(".section");
 
 // Make mobile navigation work
-
 const btnNavEl = document.querySelector(".btn-mobile-nav");
 const headerEl = document.querySelector(".header");
 
@@ -16,11 +15,19 @@ btnNavEl.addEventListener("click", function () {
   headerEl.classList.toggle("nav-open");
 });
 
-//------------------button scroll to------------------------------------
-btnScrollTo.addEventListener('click',function(e){
-  section1.scrollIntoView({behavior:'smooth'});
-})
+// Automatsko zatvaranje menija kada se klikne na navigacionu stavku
+const navLinks = document.querySelectorAll(".navigation__link");
 
+navLinks.forEach(link => {
+  link.addEventListener("click", function () {
+    headerEl.classList.remove("nav-open"); // Zatvara meni uklanjanjem klase
+  });
+});
+
+//------------------button scroll to------------------------------------
+btnScrollTo.addEventListener('click', function (e) {
+  section1.scrollIntoView({ behavior: 'smooth' });
+});
 //----------------------------------------------------------------------
 
 //-------------navigation scroll'smooth'--------------------------------
@@ -31,19 +38,17 @@ document.querySelector(".navigation__links").addEventListener("click", function 
     document.querySelector(id).scrollIntoView({ behavior: "smooth" });
   }
 });
-
 //----------------------------------------------------------------------
 
 //----------menu fade animations----------------------------------------
-
-const handleHover = function(e){
-  if(e.target.classList.contains('navigation__link')){
+const handleHover = function (e) {
+  if (e.target.classList.contains('navigation__link')) {
     const link = e.target;
     const siblings = link.closest('.navigation').querySelectorAll('.navigation__link');
     const logo = link.closest('.navigation').querySelector('img');
 
     siblings.forEach(el => {
-      if(el !==link) el.style.opacity = this;
+      if (el !== link) el.style.opacity = this;
     });
     logo.style.opacity = this;
   }
@@ -52,21 +57,18 @@ const handleHover = function(e){
 // Passing "argument" into handler
 nav.addEventListener('mouseover', handleHover.bind(0.5));
 nav.addEventListener('mouseout', handleHover.bind(1));
-
 //---------------------------------------------------------------
 
 //---------------------sticky nav------------------------------------
-
 const navHeight = nav.getBoundingClientRect().height;
 
-const stickyNav = function(entries){
+const stickyNav = function (entries) {
   const [entry] = entries;
 
-  if (!entry.isIntersecting){
-    nav.classList.add("sticky"); 
+  if (!entry.isIntersecting) {
+    nav.classList.add("sticky");
     btnNavEl.classList.add("sticky");
-  }
-  else {
+  } else {
     nav.classList.remove("sticky");
     btnNavEl.classList.remove("sticky");
   }
@@ -82,51 +84,47 @@ heroObserver.observe(hero);
 //-------------------------------------------------------------------
 
 //----------revealing elements on scroll-----------------------------
-
-const revealSection = function(entries,observer){
+const revealSection = function (entries, observer) {
   const [entry] = entries;
-  if(!entry.isIntersecting) return;
+  if (!entry.isIntersecting) return;
   entry.target.classList.remove('section--hidden');
   observer.unobserve(entry.target);
-}
+};
 
 const sectionObserver = new IntersectionObserver(revealSection, {
   root: null,
   threshold: 0.15,
 });
 
-allSections.forEach(function(section){
+allSections.forEach(function (section) {
   sectionObserver.observe(section);
   section.classList.add('section--hidden');
 });
-
 //--------------------------------------------------------------------------------
 
 //------------------lazy loading img----------------------------------------------
-
-
 const imgTargets = document.querySelectorAll('img[data-src]');
 
-const loadImg = function(entries,observer){
+const loadImg = function (entries, observer) {
   const [entry] = entries;
-  if(!entry.isIntersecting) return;
+  if (!entry.isIntersecting) return;
   entry.target.src = entry.target.dataset.src;
 
-  entry.target.addEventListener('load', function(){
-  entry.target.classList.remove('lazy-img');
+  entry.target.addEventListener('load', function () {
+    entry.target.classList.remove('lazy-img');
   });
   observer.unobserve(entry.target);
-}
+};
 
-const imgObserver = new IntersectionObserver(loadImg,{
-  root:null,
-  threshold:0,
+const imgObserver = new IntersectionObserver(loadImg, {
+  root: null,
+  threshold: 0,
   rootMargin: '200px',
-})
+});
 
-imgTargets.forEach(function(img){
+imgTargets.forEach(function (img) {
   imgObserver.observe(img);
-})
+});
 //---------------------------------------------------------------------------
 
 // Slider
@@ -216,49 +214,45 @@ slider();
 
 ///////////////////////////////////////////////////////////
 // Slider2
+const slides2 = document.querySelectorAll('.slide__galery');
+const btnLeft2 = document.querySelector(".slider__galery__btn--left");
+const btnRight2 = document.querySelector(".slider__galery__btn--right");
 
-  const slides = document.querySelectorAll('.slide__galery');
-  const btnLeft = document.querySelector(".slider__galery__btn--left");
-  const btnRight = document.querySelector(".slider__galery__btn--right");
+let curSlide2 = 0;
+const maxSlide2 = slides2.length;
 
-  let curSlide = 0;
-  const maxSlide = slides.length;
+const goToSlide2 = function (slide) {
+  slides2.forEach(
+    (s, i) => (s.style.transform = `translateX(${100 * (i - slide)}%)`)
+  );
+};
+goToSlide2(0);
 
-  // Functions
+// Next slide
+const nextSlide2 = function () {
+  if (curSlide2 === maxSlide2 - 1) {
+    curSlide2 = 0;
+  } else {
+    curSlide2++;
+  }
 
+  goToSlide2(curSlide2);
+};
 
-  const goToSlide = function (slide) {
-    slides.forEach(
-      (s, i) => (s.style.transform = `translateX(${100 * (i - slide)}%)`)
-    );
-  };
-  goToSlide(0);
-  // Next slide
-  const nextSlide = function () {
-    if (curSlide === maxSlide - 1) {
-      curSlide = 0;
-    } else {
-      curSlide++;
-    }
+const prevSlide2 = function () {
+  if (curSlide2 === 0) {
+    curSlide2 = maxSlide2 - 1;
+  } else {
+    curSlide2--;
+  }
+  goToSlide2(curSlide2);
+};
 
-    goToSlide(curSlide);
-  };
+// Event handlers
+btnRight2.addEventListener('click', nextSlide2);
+btnLeft2.addEventListener('click', prevSlide2);
 
-  const prevSlide = function () {
-    if (curSlide === 0) {
-      curSlide = maxSlide - 1;
-    } else {
-      curSlide--;
-    }
-    goToSlide(curSlide);
-  };
-
-
-  // Event handlers
-  btnRight.addEventListener('click', nextSlide);
-  btnLeft.addEventListener('click', prevSlide);
-
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'ArrowLeft') prevSlide();
-    e.key === 'ArrowRight' && nextSlide();
-  });
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'ArrowLeft') prevSlide2();
+  e.key === 'ArrowRight' && nextSlide2();
+});
